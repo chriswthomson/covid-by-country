@@ -376,7 +376,7 @@ var app = {
 					});
 
 					// Sort by deaths (desc) by default
-					$uk.trigger($uk.$$("thead tr th span", table)[7], "click");
+					$uk.trigger($uk.$$("thead tr th span", table)[3], "click");
 					this$1._init = true;
 
 					// Make <thead> sticky
