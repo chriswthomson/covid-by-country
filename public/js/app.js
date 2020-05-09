@@ -321,12 +321,7 @@ var app = {
 					$uk.on(table, "click", "th span", function(e) {
 
 						if(this$1._init) {
-							UIkit.notification({
-								message: "Sorting <span data-uk-spinner></span>",
-								pos: "bottom-left",
-								status: "primary",
-								timeout: 1024
-							});
+							// @todo add loading icon
 						}
 
 						var th = e.target.parentElement;
@@ -376,7 +371,7 @@ var app = {
 					});
 
 					// Sort by deaths (desc) by default
-					$uk.trigger($uk.$$("thead tr th span", table)[3], "click");
+					$uk.trigger($uk.$$("thead tr th span", table)[2], "click");
 					this$1._init = true;
 
 					// Make <thead> sticky
