@@ -1,0 +1,45 @@
+body {
+	color: #333;
+}
+
+.uk-table th {
+	color: #333;
+	font-size: 1rem;
+	font-weight: 700;
+	text-transform: none;
+}
+
+.uk-table th span {
+	display: block;
+	cursor: pointer;
+}
+
+.uk-table th.uk-active {
+	background-color: #f1f1f1;
+	color: #222;
+	position: relative;
+}
+
+.uk-table th.uk-active:after {
+	bottom: 0.2em;
+	content: ">";
+	font-size: 0.666em;
+	left: 50%;
+	line-height: 1;
+	opacity: 0.333;
+	position: absolute;
+	transform: translateX(-50%) rotate(90deg);
+}
+
+.uk-table th.desc:after {
+	transform: translateX(-50%)rotate(270deg);
+}
+
+.uk-table th sup {
+	font-size: 0.666em;
+	opacity: 0.333;
+}
+
+.uk-table td.uk-active {
+	background-color: #f1f1f1;
+}
