@@ -13,6 +13,7 @@
 var $uk = UIkit.util;
 var app = {
 
+	_init: false,
 	countries: {},
 	minPopulation: 100000,
 	sources: ["https://restcountries.eu/rest/v2/all"],
@@ -178,11 +179,11 @@ var app = {
 					}
 
 					var values = { // Holds all the values for calculating means
+						4: [],
 						5: [],
-						6: [],
+						7: [],
 						8: [],
 						9: [],
-						10: [],
 					};
 					var tr = [];
 					var population, area, density, cases, casesPerMil, casesPerKm, deaths, deathsPerMil, deathsPerKm, cfr;
@@ -204,16 +205,15 @@ var app = {
 							//deaths_pd = deaths / density; //((density / deathsPerKm) * deathsPerMil) / 1000;
 							cfr = (deaths / cases) * 100;
 
-							values[5].push(casesPerMil);
-							values[6].push(casesPerKm);
-							values[8].push(deathsPerMil);
-							values[9].push(deathsPerKm);
-							values[10].push(cfr);
+							values[4].push(casesPerMil);
+							values[5].push(casesPerKm);
+							values[7].push(deathsPerMil);
+							values[8].push(deathsPerKm);
+							values[9].push(cfr);
 
 							tr.push(this$1.join([
 								row[0],
 								this$1.formatNumber(population),
-								this$1.formatNumber(area),
 								this$1.formatNumber(density),
 								this$1.formatNumber(cases),
 								casesPerMil.toFixed(2),
@@ -248,7 +248,6 @@ var app = {
 								"<thead><tr>" + this$1.join([
 									"Country",
 									this$1.th("Population", 1),
-									this$1.th("Area", 1, perKm),
 									this$1.th("Density", 1, "Population " + perKm),
 									this$1.th("Cases", 2, "Confirmed cases"),
 									this$1.th(perMil, 0, "Confirmed cases " + perMillion),
@@ -272,12 +271,13 @@ var app = {
 							"<div>" +
 								"<h5>Notes</h5>" +
 								"<ul>" + this$1.join([
-									"The data is provided by John Hopkins, who use it for their " +
+									"Click on a header to sort by that stastic. Click again to change the sort direction.",
+									"The data is provided by Johns Hopkins University, who use it for their " +
 										this$1.link("https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "COVID-19 Dashboard") + ".",
 									"Only countries with recorded deaths and populations above " + this$1.formatNumber(this$1.minPopulation) + " are displayed.",
 									"The population statistics from restcountries.eu seem out-of-date to me. I wasn't able to verify where they are getting the data from, but I assume it is from the last available census for each country.",
-									"I'm a web developer, not a statistician. If you have any feedback, please " +
-										this$1.link("https://github.com/chriswthomson/covid-by-country/issues", "let me know") + "!",
+									"I'm a web developer, not a statistician. If you have any feedback, " +
+										this$1.link("https://github.com/chriswthomson/covid-by-country/issues", "come you") + "!",
 								], "li") + "</ul>" +
 							"</div>" +
 							"<div>" +
@@ -319,6 +319,15 @@ var app = {
 
 					// When a heading is clicked, sort the table
 					$uk.on(table, "click", "th span", function(e) {
+
+						if(this$1._init) {
+							UIkit.notification({
+								message: "Sorting <span data-uk-spinner></span>",
+								pos: "bottom-left",
+								status: "primary",
+								timeout: 1024
+							});
+						}
 
 						var th = e.target.parentElement;
 						var cellIndex = th.cellIndex;
@@ -368,6 +377,7 @@ var app = {
 
 					// Sort by deaths (desc) by default
 					$uk.trigger($uk.$$("thead tr th span", table)[7], "click");
+					this$1._init = true;
 
 					// Make <thead> sticky
 					// @todo Cannot get this to work
