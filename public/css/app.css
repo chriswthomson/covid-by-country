@@ -1,6 +1,33 @@
+html {
+	font-size: 15px;
+}
+
+@media (max-width: 959px) {
+	html {
+		font-size: 14px;
+	}
+}
+
+@media (max-width: 639px) {
+	html {
+		font-size: 13px;
+	}
+}
+
+@media (max-width: 479px) {
+	html {
+		font-size: 12px;
+	}
+}
+
 body {
 	color: #333;
 }
+
+/*.uk-table thead.uk-active {
+	background: #fff;
+	border-bottom: 1px solid #f1f1f1;
+}*/
 
 .uk-table th {
 	color: #333;
@@ -15,15 +42,16 @@ body {
 }
 
 .uk-table th.uk-active {
-	background-color: #f1f1f1;
+	background-color: #e5e5e5;
 	color: #222;
 	position: relative;
 }
 
-.uk-table th.uk-active:after {
+.uk-table th.uk-active span:after {
 	bottom: 0.2em;
 	content: ">";
 	font-size: 0.666em;
+	font-weight: 300;
 	left: 50%;
 	line-height: 1;
 	opacity: 0.333;
@@ -31,15 +59,29 @@ body {
 	transform: translateX(-50%) rotate(90deg);
 }
 
-.uk-table th.desc:after {
+.uk-table th.desc span:after {
 	transform: translateX(-50%)rotate(270deg);
 }
 
-.uk-table th sup {
+.uk-table th .source {
 	font-size: 0.666em;
 	opacity: 0.333;
 }
 
+.uk-table tr td:first-child {
+	font-weight: 600;
+}
+
 .uk-table td.uk-active {
 	background-color: #f1f1f1;
+}
+
+.uk-table tr :nth-child(6),
+.uk-table tr :nth-child(9),
+.uk-table tr :nth-child(12) {
+	border-left: 1px solid #e5e5e5;
+}
+
+a {
+	word-break: break-all;
 }
