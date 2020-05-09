@@ -1,22 +1,22 @@
 html {
-	font-size: 15px;
+	font-size: 14px;
 }
 
 @media (max-width: 959px) {
-	html {
-		font-size: 14px;
-	}
-}
-
-@media (max-width: 639px) {
 	html {
 		font-size: 13px;
 	}
 }
 
-@media (max-width: 479px) {
+@media (max-width: 639px) {
 	html {
 		font-size: 12px;
+	}
+}
+
+@media (max-width: 479px) {
+	html {
+		font-size: 11px;
 	}
 }
 
@@ -24,10 +24,37 @@ body {
 	color: #333;
 }
 
+em {
+	color: inherit;
+}
+
+h1 {
+	font-size: 2rem;
+	font-weight: 900;
+	margin-top: 30px;
+}
+
+h5 {
+	margin-bottom: 5px;
+}
+
+a {
+	word-break: break-all;
+}
+
+ul, ol {
+	margin-top: 0;
+}
+
 /*.uk-table thead.uk-active {
 	background: #fff;
 	border-bottom: 1px solid #f1f1f1;
 }*/
+
+.uk-table tr > :first-child {
+	background: #fff;
+	border-right: 1px solid #e5e5e5;
+}
 
 .uk-table th {
 	color: #333;
@@ -37,8 +64,9 @@ body {
 }
 
 .uk-table th span {
-	display: block;
 	cursor: pointer;
+	display: block;
+	white-space: nowrap;
 }
 
 .uk-table th.uk-active {
@@ -76,12 +104,29 @@ body {
 	background-color: #f1f1f1;
 }
 
-.uk-table tr :nth-child(6),
-.uk-table tr :nth-child(9),
-.uk-table tr :nth-child(12) {
+.uk-table tr :nth-child(5),
+.uk-table tr :nth-child(8),
+.uk-table tr :nth-child(11) {
 	border-left: 1px solid #e5e5e5;
 }
 
-a {
-	word-break: break-all;
+@media (max-width: 639px) {
+
+	h1 {
+		margin-top: 15px;
+	}
+
+	.uk-table tr > :first-child {
+		box-sizing: border-box;
+		height: 36px;
+		overflow: hidden;
+		position: absolute;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 23vw;
+	}
+
+	.uk-table tr :nth-child(2) {
+		padding-left: calc(23vw + 24px);
+	}
 }

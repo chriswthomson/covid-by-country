@@ -5,11 +5,8 @@
  * @author Chris Thomson
  *
  * @todo Improve error handling
- * @todo Improve mobile display (can countries be fixed to left?)
- * @todo Per Million compensated by Gini
+ * @todo Filter by Continent
  * @todo Per Million compensated by Density
- * @todo Combination of both compensations
- * @todo Death Rate
  *
  */
 
@@ -17,6 +14,7 @@ var $uk = UIkit.util;
 var app = {
 
 	countries: {},
+	minPopulation: 100000,
 	sources: ["https://restcountries.eu/rest/v2/all"],
 	tries: 2,
 
@@ -134,102 +132,98 @@ var app = {
 
 					data.shift();
 
-					// Create table rows
-					var rows = [];
+					// Create a record for each country
+					var countries = {};
 					var lastUpdated = "";
-					var calc = { // These countries need to be calculated from counties/states
-						"Australia": [0, 0, 0, 0],
-						"Canada": [0, 0, 0, 0],
-						"China": [0, 0, 0, 0],
-						"United States": [0, 0, 0, 0]
-					};
 					data.forEach(function(row) {
 						var name = row[3];
-						if(!row[0] && !row[1] && !row[2]) {
-							var td = this$1.getRow(row);
-							if(td) rows.push(td);
-						} else if(name in calc) {
-							for(var i = 0; i < 4; i++) {
-								calc[name][i] = parseInt(calc[name][i]) + parseInt(row[i + 7]);
+						if(name) {
+							name = name.replace("*", ""); // Taiwan name fix
+							if(!(name in countries)) countries[name] = [0, 0];
+							for(var i = 0; i < 2; i++) { // Cases, Deaths
+								countries[name][i] = parseInt(countries[name][i]) + parseInt(row[i + 7]);
 							}
-						} else if(name == "US" && row[1] !== "Unassigned") {
-							for(var i = 0; i < 4; i++) {
-								calc["United States"][i] = parseInt(calc["United States"][i]) + parseInt(row[i + 7]);
-							}
+							if(row[4]) lastUpdated = row[4];
 						}
-						if(row[4]) lastUpdated = row[4];
 					});
 
-					// Create table rows for calculated data
-					for(var name in calc) {
-						rows.push(this$1.getRow(["", "", "", name, "", "", ""].concat(calc[name])));
+					// Create the table rows
+					var rows = [];
+					for(var name in countries) {
+
+						var stats = countries[name];
+						if(name == "US") name = "United States"; // US fix
+						var row = [name];
+						var country;
+
+						// Find the country data
+						for(i = 0; i < this$1.countries.length; i++) {
+							country = this$1.countries[i];
+							if(country.name == name || country.nativeName == name) {
+								row.push(country.population);
+								row.push(country.area);
+								row.push((country.population / country.area).toFixed(2));
+								break;
+							}
+						}
+
+						if(row.length > 1) {
+							for(var i = 0; i < 2; i++) {
+								row.push(stats[i]);
+							}
+							rows.push(row);
+						} else {
+							console.log(name, stats)
+						}
 					}
 
-					var values = { // Holds all values for calculating mean
+					var values = { // Holds all the values for calculating means
+						5: [],
 						6: [],
-						7: [],
+						8: [],
 						9: [],
 						10: [],
-						11: [],
-						//8: [],
-						//9: [],
-						//11: [],
-						//12: [],
-						//13: [],
-						//14: [],
 					};
 					var tr = [];
-					var population, area, density, gini, cases, cases_pm, deaths, deaths_pm;
+					var population, area, density, cases, casesPerMil, casesPerKm, deaths, deathsPerMil, deathsPerKm, cfr;
 					rows.forEach(function(row) {
 
 						population = row[1];
 						area = row[2];
 						density = row[3];
-						gini = row[4];
-						cases = parseInt(row[5]);
-						deaths = parseInt(row[6]);
+						cases = parseInt(row[4]);
+						deaths = parseInt(row[5]);
 
-						if(deaths) { // Only countries with deaths are displayed
+						if(deaths && population > this$1.minPopulation) {
 
-							cases_pm = (cases / population) * 1000000;
-							cases_pk = cases / area;
-							cases_pg = (gini * cases_pm) / 1000;
-							cases_pd = cases / density;//((density / cases_pk) * cases_pm) / 1000;
-							deaths_pm = (deaths / population) * 1000000;
-							deaths_pk = deaths / area;
-							deaths_pg = (gini * deaths_pm) / 1000;
-							deaths_pd = deaths / density; //((density / deaths_pk) * deaths_pm) / 1000;
+							casesPerMil = (cases / population) * 1000000;
+							casesPerKm = cases / area;
+							//cases_pd = cases / density;//((density / casesPerKm) * casesPerMil) / 1000;
+							deathsPerMil = (deaths / population) * 1000000;
+							deathsPerKm = deaths / area;
+							//deaths_pd = deaths / density; //((density / deathsPerKm) * deathsPerMil) / 1000;
 							cfr = (deaths / cases) * 100;
 
-							values[6].push(cases_pm);
-							values[7].push(cases_pk);
-							//values[8].push(cases_pg);
-							//values[9].push(cases_pd);
-							values[9].push(deaths_pm);
-							values[10].push(deaths_pk);
-							//values[13].push(deaths_pg);
-							//values[14].push(deaths_pd);
-							values[11].push(cfr);
+							values[5].push(casesPerMil);
+							values[6].push(casesPerKm);
+							values[8].push(deathsPerMil);
+							values[9].push(deathsPerKm);
+							values[10].push(cfr);
 
 							tr.push(this$1.join([
 								row[0],
 								this$1.formatNumber(population),
 								this$1.formatNumber(area),
 								this$1.formatNumber(density),
-								gini,
 								this$1.formatNumber(cases),
-								cases_pm.toFixed(2),
-								cases_pk.toFixed(4),
-								//cases_pg.toFixed(2),
+								casesPerMil.toFixed(2),
+								casesPerKm.toFixed(4),
 								//cases_pd.toFixed(2),
 								this$1.formatNumber(deaths),
-								deaths_pm.toFixed(2),
-								deaths_pk.toFixed(4),
-								//deaths_pg.toFixed(2),
+								deathsPerMil.toFixed(2),
+								deathsPerKm.toFixed(4),
 								//deaths_pd.toFixed(2),
 								cfr.toFixed(2),
-								//this$1.formatNumber(row[7]),
-								//this$1.formatNumber(row[8]),
 							], "td"));
 						}
 					});
@@ -238,7 +232,6 @@ var app = {
 					var perKm = "per km<sup>2</sup>";
 					var perMil = "per Mil.";
 					var perMillion = "per Million";
-					var seeFormulas = "See <strong>Formulas</strong> for more information.";
 
 					// Sources
 					var sources = [];
@@ -257,66 +250,44 @@ var app = {
 									this$1.th("Population", 1),
 									this$1.th("Area", 1, perKm),
 									this$1.th("Density", 1, "Population " + perKm),
-									this$1.th(
-										"Gini",
-										1,
-										"The Gini coefficient is a commonly-used measure of income inequality " +
-										"that condenses the entire income distribution for a country into a single number " +
-										"between 0 and 1: the higher the number, the greater the degree of income inequality."
-									),
 									this$1.th("Cases", 2, "Confirmed cases"),
 									this$1.th(perMil, 0, "Confirmed cases " + perMillion),
 									this$1.th(perKm, 0, "Confirmed cases " + perKm),
-									//this$1.th("Gini", 0, "Gini Factor. " + seeFormulas),
 									//this$1.th("Density", 0, "Density Factor. " + seeFormulas),
 									this$1.th("Deaths", 2),
 									this$1.th(perMil, 0, "Deaths " + perMillion),
 									this$1.th(perKm, 0, "Deaths " + perKm),
-									//this$1.th("Gini", 0, "Gini Factor. " + seeFormulas),
 									//this$1.th("Density", 0, "Density Factor. " + seeFormulas),
-									//this$1.th("Recovered", 2),
-									//this$1.th("Active", 2),
 									this$1.th("CFR", 0, "Case Fatality Rate (%)"),
 								], "th") + "</tr></thead>" +
 								"<tbody>" + this$1.join(tr, "tr") + "</tbody>" +
 							"</table>" +
-							"<div id='table-end'></div>" +
+							//"<div id='table-end'></div>" +
 						"</div>" +
 						"<div class='uk-margin-medium-top uk-margin-medium-bottom'>" +
 							"<div>" +
 								"<h5>Sources</h5>" +
 								"<ol>" + this$1.join(sources, "li") + "</ol>" +
 							"</div>" +
-							/*"<div>" +
-								"<h5>Forumlas</h5>" +
-								"<ul>" + this$1.join([
-									"<strong>Density</strong>: Population / Area",
-									"<strong>per Million</strong>: ([Cases|Deaths] / Population) * 1,000,000",
-									"<strong>per km<sup>2</sup></strong>: [Cases|Deaths] / Area",
-									//"<strong>Gini Factor</strong>: (Gini coefficient * [Cases|Deaths] per Million) / 1000",
-									//"<strong>Density Factor</strong>: ((Density / [Cases|Deaths] per km<sup>2</sup>) * [Cases|Deaths] per Million) / 1000",
-								], "li") + "</ul>" +
-							"</div>" +*/
 							"<div>" +
 								"<h5>Notes</h5>" +
 								"<ul>" + this$1.join([
-									"The data is provided by John Hopkins, but seems to be behind their " +
-										this$1.link("https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "COVID-19 Dashboard") + " by a day at most.",
-									"For Australia, Canada, China and the United States, statistics need to be calculated from county/state data and therefore may not be exact.",
-									"Only countries with recorded deaths are displayed.",
-									"The population statistics from restcountries.eu seems out-of-date to me. I wasn't able to verify where they are getting the data from, but I assume it is from the last available census for each country.",
-									//"The <strong>Gini Factor</strong> allows and is caluclated by ",
+									"The data is provided by John Hopkins, who use it for their " +
+										this$1.link("https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "COVID-19 Dashboard") + ".",
+									"Only countries with recorded deaths and populations above " + this$1.formatNumber(this$1.minPopulation) + " are displayed.",
+									"The population statistics from restcountries.eu seem out-of-date to me. I wasn't able to verify where they are getting the data from, but I assume it is from the last available census for each country.",
 									"I'm a web developer, not a statistician. If you have any feedback, please " +
 										this$1.link("https://github.com/chriswthomson/covid-by-country/issues", "let me know") + "!",
 								], "li") + "</ul>" +
 							"</div>" +
 							"<div>" +
 								"<h5>Key</h5>" +
+								"<em>The value is:</em>" +
 								"<ul>" + this$1.join([
-									"<span class='uk-text-danger'>The value is greater than the midpoint between the mean and the highest value.</span>",
-									"<span class='uk-text-warning'>The value is lower than the midpoint between the mean and the highest value.</span>",
-									"<span class='uk-text-default'>The value is greater than the midpoint between the mean and the lowest value.</span>",
-									"<span class='uk-text-success'>The value is lower than the midpoint between the mean and the lowest value.</span>",
+									"<span class='uk-text-danger'>Greater than the midpoint between the mean and the highest value.</span>",
+									"<span class='uk-text-warning'>Lower than the midpoint between the mean and the highest value.</span>",
+									"<span class='uk-text-default'>Greater than the midpoint between the mean and the lowest value.</span>",
+									"<span class='uk-text-success'>Lower than the midpoint between the mean and the lowest value.</span>",
 								], "li") + "</ul>" +
 							"</div>" +
 							"<div class='uk-text-meta'>Last Updated: " + lastUpdated + " (UTC)</div>" +
@@ -396,7 +367,7 @@ var app = {
 					});
 
 					// Sort by deaths (desc) by default
-					//$uk.trigger($uk.$$("thead tr th span", table)[9], "click");
+					$uk.trigger($uk.$$("thead tr th span", table)[7], "click");
 
 					// Make <thead> sticky
 					// @todo Cannot get this to work
@@ -419,43 +390,6 @@ var app = {
 				}
 			}
 		);
-	},
-
-	/**
-	 * Get a row of country data
-	 *
-	 * @param {Array} row
-	 * @param {string} [name]
-	 * @return {Array}
-	 *
-	 */
-	getRow: function(row, name) {
-
-		if(name === void 0) name = row[3];
-
-		var td = [name];
-		var country;
-		var countries = this.countries;
-
-		for(i = 0; i < countries.length; i++) {
-			country = countries[i];
-			if((country.name == name || country.nativeName == name) && country.gini) {
-				td.push(country.population);
-				td.push(country.area);
-				td.push((country.population / country.area).toFixed(2));
-				td.push(country.gini);
-				break;
-			}
-		}
-
-		if(td.length > 1) {
-			for(var i = 7; i < 11; i++) {
-				td.push(row[i]);
-			}
-			return td;
-		}
-
-		return null;
 	},
 
 	/**
