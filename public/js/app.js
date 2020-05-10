@@ -363,7 +363,7 @@ var app = {
 						rows.sort(function(a, b) {
 							x = parseFloat($uk.$$("td", a)[cellIndex].innerHTML.replace(/,/g, ""));
 							y = parseFloat($uk.$$("td", b)[cellIndex].innerHTML.replace(/,/g, ""));
-							return desc ? x > y : x < y;
+							return desc ? (x > y ? 1 : -1) : (x < y ? 1 : -1);
 						});
 
 						$uk.html(tbody, rows);
