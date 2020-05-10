@@ -163,9 +163,13 @@ ul, ol {
 	}
 
 	.uk-table tr > :nth-child(2).uk-active:after {
-		left: calc(30vw + 6px + ((100% - 30vw - 6px) / 2));
+		left: calc(30vw + 6px + ((100% - 30vw - 12px) / 2));
 		transform: translateX(-50%);
 		width: calc((100% - 30vw - 6px) / 3);
+	}
+
+	.uk-table tr > :nth-child(2) .uk-spinner {
+		left: calc(30vw + 6px + ((100% - 30vw - 12px) / 2));
 	}
 }
 
@@ -184,11 +188,11 @@ ul, ol {
 		height: 26px;
 	}
 
-	.uk-table tr > :nth-child(2) {
-		padding-left: calc(30vw + 6px);
-	}
-
 	.uk-table th .uk-spinner {
 		width: 20px;
+	}
+
+	.uk-table tr > :nth-child(2) {
+		padding-left: calc(30vw + 6px);
 	}
 }
