@@ -458,3 +458,8 @@ var app = {
 $uk.ready(function() {
 	app.init();
 });
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-166045926-1');

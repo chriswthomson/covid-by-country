@@ -46,6 +46,10 @@ ul, ol {
 	margin: 0;
 }
 
+.uk-h3 {
+	font-weight: 700;
+}
+
 /*.uk-table thead.uk-active {
 	background: #fff;
 	border-bottom: 1px solid #f1f1f1;
