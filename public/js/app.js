@@ -290,7 +290,7 @@ var app = {
 							"<div class='uk-margin-medium-bottom'>" +
 								"<h5>Notes</h5>" +
 								"<ul>" + this$1.join([
-									"Click on a header to sort by that stastic. Click again to change the sort direction.",
+									"Click on a header to sort by that statistic. Click again to change the sort direction.",
 									"The data is provided by Johns Hopkins University, who use it for their " +
 										this$1.link("https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "COVID-19 Dashboard") + ".",
 									"Only countries with populations > " + this$1.formatNumber(this$1.minPopulation) + " and recorded deaths are displayed.",

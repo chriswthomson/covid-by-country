@@ -160,3 +160,23 @@ ul, ol {
 		padding-left: calc(30vw + 12px);
 	}
 }
+
+@media (max-width: 479px) {
+
+	h1 {
+		font-size: 1.666rem;
+	}
+
+	.uk-table-small th,
+	.uk-table-small td {
+		padding: 5px 6px;
+	}
+
+	.uk-table tr > :first-child {
+		height: 26px;
+	}
+
+	.uk-table tr > :nth-child(2) {
+		padding-left: calc(30vw + 6px);
+	}
+}
