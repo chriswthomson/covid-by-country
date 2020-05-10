@@ -43,7 +43,7 @@ a {
 }
 
 ul, ol {
-	margin-top: 0;
+	margin: 0;
 }
 
 /*.uk-table thead.uk-active {
@@ -51,44 +51,58 @@ ul, ol {
 	border-bottom: 1px solid #f1f1f1;
 }*/
 
-.uk-table tr > :first-child {
-	background: #fff;
-	border-right: 1px solid #e5e5e5;
-}
-
 .uk-table th {
 	color: #333;
 	font-size: 1rem;
 	font-weight: 700;
+	position: relative;
 	text-transform: none;
 }
 
-.uk-table th span {
+.uk-table th .label {
 	cursor: pointer;
 	display: block;
 	white-space: nowrap;
 }
+.uk-table th.uk-active .label {
+	z-index: 2;
+}
+
+.uk-table th .uk-spinner {
+	display: none;
+	left: 50%;
+	opacity: 0.23;
+	position: absolute;
+	transform: translate(-50%, -50%);
+	top: 50%;
+	z-index: 1;
+}
+
+.uk-table th.loading .uk-spinner {
+	display: inline-block;
+}
 
 .uk-table th.uk-active {
-	background-color: #e5e5e5;
+	background-color: #f5f5f5;
 	color: #222;
 	position: relative;
 }
 
-.uk-table th.uk-active span:after {
-	bottom: 0.2em;
-	content: ">";
-	font-size: 0.666em;
-	font-weight: 300;
-	left: 50%;
-	line-height: 1;
-	opacity: 0.333;
+.uk-table th.uk-active:after {
+	background-color: #e5e5e5;
+	bottom: calc(-33% - 1px);
+	clip-path: polygon(50% 100%, 0 0, 100% 0);
+	content: "";
+	height: 33%;
+	left: 33%;
 	position: absolute;
-	transform: translateX(-50%) rotate(90deg);
+	width: 33%;
+	z-index: 1;
 }
 
-.uk-table th.desc span:after {
-	transform: translateX(-50%)rotate(270deg);
+.uk-table th.uk-active.desc:after {
+	bottom: 0;
+	clip-path: polygon(50% 0, 0 100%, 100% 100%);
 }
 
 .uk-table th .source {
@@ -101,13 +115,27 @@ ul, ol {
 }
 
 .uk-table td.uk-active {
-	background-color: #f1f1f1;
+	background-color: #f5f5f5;
+}
+
+.uk-table tr > :first-child {
+	background: #fff;
+	border-right: 1px solid #e5e5e5;
 }
 
 .uk-table tr :nth-child(4),
 .uk-table tr :nth-child(7),
 .uk-table tr :nth-child(10) {
 	border-left: 1px solid #e5e5e5;
+}
+
+.uk-table-hover tbody tr:hover,
+.uk-table-hover tbody tr:hover td {
+	background-color: #f5f5f5;
+}
+
+.uk-table-hover tbody tr:hover td.uk-active {
+	background-color: #e5e5e5;
 }
 
 @media (max-width: 639px) {
@@ -124,11 +152,11 @@ ul, ol {
 		position: absolute;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		width: 23vw;
+		width: 30vw;
 		z-index: 2
 	}
 
-	.uk-table tr :nth-child(2) {
-		padding-left: calc(23vw + 12px);
+	.uk-table tr > :nth-child(2) {
+		padding-left: calc(30vw + 12px);
 	}
 }

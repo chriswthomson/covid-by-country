@@ -1,23 +1,22 @@
 /**
  * COVID-19 Statistics by Country
  *
- * @version 1.0.0
+ * @version 1.0.1
  * @author Chris Thomson
  *
- * @todo Improve error handling
+ * @todo Improve error messages
  * @todo Filter by Continent
- * @todo Per Million compensated by Density
+ * @todo Export data as CSV?
  *
  */
 
 var $uk = UIkit.util;
 var app = {
 
-	_init: false,
 	countries: {},
 	minPopulation: 100000,
 	sources: ["https://restcountries.eu/rest/v2/all"],
-	tries: 2,
+	tries: 3,
 
 	/**
 	 * Get Country Data from restcountries.eu
@@ -153,14 +152,41 @@ var app = {
 					for(var name in countries) {
 
 						var stats = countries[name];
-						if(name == "US") name = "United States"; // US fix
-						var row = [name];
-						var country;
 
+						var fixes = {
+							"Burma": "Myanmar",
+							"Congo (Brazzaville)": "Congo",
+							"Congo (Kinshasa)": "Congo (Democratic Republic of the)",
+							"Korea, South": "South Korea",
+							"US": "United States",
+						};
+						if(name in fixes) name = fixes[name];
+
+						var row = [name];
+
+						fixes = {
+							"Brunei": "Brunei Darussalam",
+							"Cote d'Ivoire": "",
+							"Czechia": "Czech Republic",
+							//"Diamond Princess": "", // Cruise Ship
+							"Eswatini": "Swaziland",
+							"Iran": "Iran (Islamic Republic of)",
+							"Kosovo": "Republic of Kosovo",
+							//"MS Zaandam": "", // Cruise Ship
+							"North Macedonia": "Republic of Macedonia",
+							"Russia": "Russian Federation",
+							"South Korea": "Korea (Republic of)",
+							"Syria": "Syrian Arab Republic",
+							"Vietnam": "Viet Nam",
+							//"West Bank and Gaza": "", // Couldn't find it in the API
+						};
+						if(name in fixes) name = fixes[name];
+
+						var country;
 						// Find the country data
 						for(i = 0; i < this$1.countries.length; i++) {
 							country = this$1.countries[i];
-							if(country.name == name || country.nativeName == name) {
+							if(country.name == name || country.nativeName == name || $uk.includes(country.altSpellings, name)) {
 								row.push(country.population);
 								row.push(country.area);
 								row.push((country.population / country.area).toFixed(2));
@@ -173,8 +199,6 @@ var app = {
 								row.push(stats[i]);
 							}
 							rows.push(row);
-						} else {
-							console.log(name, stats)
 						}
 					}
 
@@ -199,10 +223,8 @@ var app = {
 
 							casesPerMil = (cases / population) * 1000000;
 							casesPerKm = cases / area;
-							//cases_pd = cases / density;//((density / casesPerKm) * casesPerMil) / 1000;
 							deathsPerMil = (deaths / population) * 1000000;
 							deathsPerKm = deaths / area;
-							//deaths_pd = deaths / density; //((density / deathsPerKm) * deathsPerMil) / 1000;
 							cfr = (deaths / cases) * 100;
 
 							values[4].push(casesPerMil);
@@ -218,11 +240,9 @@ var app = {
 								this$1.formatNumber(cases),
 								casesPerMil.toFixed(2),
 								casesPerKm.toFixed(4),
-								//cases_pd.toFixed(2),
 								this$1.formatNumber(deaths),
 								deathsPerMil.toFixed(2),
 								deathsPerKm.toFixed(4),
-								//deaths_pd.toFixed(2),
 								cfr.toFixed(2),
 							], "td"));
 						}
@@ -230,6 +250,7 @@ var app = {
 
 					// Labels
 					var perKm = "per km<sup>2</sup>";
+					var perKm2 = "per km2";
 					var perMil = "per Mil.";
 					var perMillion = "per Million";
 
@@ -244,19 +265,17 @@ var app = {
 					// Display the table
 					this$1.display(
 						"<div class='uk-overflow-auto'>" +
-							"<table id='table' class='uk-table uk-table-small uk-table-divider uk-table-justify'>" +
+							"<table id='table' class='uk-table uk-table-small uk-table-divider uk-table-hover'>" +
 								"<thead><tr>" + this$1.join([
 									"Country",
 									this$1.th("Population", 1),
-									this$1.th("Density", 1, "Population " + perKm),
+									this$1.th(perKm, 1, "Population " + perKm2),
 									this$1.th("Cases", 2, "Confirmed cases"),
 									this$1.th(perMil, 0, "Confirmed cases " + perMillion),
-									this$1.th(perKm, 0, "Confirmed cases " + perKm),
-									//this$1.th("Density", 0, "Density Factor. " + seeFormulas),
+									this$1.th(perKm, 0, "Confirmed cases " + perKm2),
 									this$1.th("Deaths", 2),
 									this$1.th(perMil, 0, "Deaths " + perMillion),
-									this$1.th(perKm, 0, "Deaths " + perKm),
-									//this$1.th("Density", 0, "Density Factor. " + seeFormulas),
+									this$1.th(perKm, 0, "Deaths " + perKm2),
 									this$1.th("CFR", 0, "Case Fatality Rate (%)"),
 								], "th") + "</tr></thead>" +
 								"<tbody>" + this$1.join(tr, "tr") + "</tbody>" +
@@ -264,25 +283,25 @@ var app = {
 							//"<div id='table-end'></div>" +
 						"</div>" +
 						"<div class='uk-margin-medium-top uk-margin-medium-bottom'>" +
-							"<div>" +
+							"<div class='uk-margin-medium-bottom'>" +
 								"<h5>Sources</h5>" +
 								"<ol>" + this$1.join(sources, "li") + "</ol>" +
 							"</div>" +
-							"<div>" +
+							"<div class='uk-margin-medium-bottom'>" +
 								"<h5>Notes</h5>" +
 								"<ul>" + this$1.join([
 									"Click on a header to sort by that stastic. Click again to change the sort direction.",
 									"The data is provided by Johns Hopkins University, who use it for their " +
 										this$1.link("https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "COVID-19 Dashboard") + ".",
-									"Only countries with recorded deaths and populations above " + this$1.formatNumber(this$1.minPopulation) + " are displayed.",
+									"Only countries with populations > " + this$1.formatNumber(this$1.minPopulation) + " and recorded deaths are displayed.",
 									"The population statistics from restcountries.eu seem out-of-date to me. I wasn't able to verify where they are getting the data from, but I assume it is from the last available census for each country.",
 									"I'm a web developer, not a statistician. If you have any feedback, " +
 										this$1.link("https://github.com/chriswthomson/covid-by-country/issues", "come you") + "!",
 								], "li") + "</ul>" +
 							"</div>" +
-							"<div>" +
+							"<div class='uk-margin-medium-bottom'>" +
 								"<h5>Key</h5>" +
-								"<em>The value is:</em>" +
+								"<em>If the value is:</em>" +
 								"<ul>" + this$1.join([
 									"<span class='uk-text-danger'>Greater than the midpoint between the mean and the highest value.</span>",
 									"<span class='uk-text-warning'>Lower than the midpoint between the mean and the highest value.</span>",
@@ -318,61 +337,59 @@ var app = {
 					}
 
 					// When a heading is clicked, sort the table
-					$uk.on(table, "click", "th span", function(e) {
-
-						if(this$1._init) {
-							// @todo add loading icon
-						}
+					$uk.on(table, "click", "th .label", function(e) {
 
 						var th = e.target.parentElement;
 						var cellIndex = th.cellIndex;
 						var clsActive = "uk-active";
 						var desc = $uk.hasClass(th, "desc");
 
-						// Toggle classes
-						if(!desc) $uk.removeClass($uk.$$("th", table), "desc");
-						$uk.removeClass($uk.$$("td, th", table), clsActive);
-						$uk.toggleClass(th, "desc");
-						$uk.addClass(th, clsActive);
+						// Show loading icon
+						$uk.addClass(th, "loading");
 
-						// Add the active class to the column
-						tr.forEach(function(row) {
-							$uk.addClass($uk.$$("td", row)[cellIndex], clsActive);
-						});
+						setTimeout(function() {
 
-						var rows, x, y, shouldSwitch;
-						var switching = true;
-						while(switching) {
+							// Toggle classes
+							if(!desc) $uk.removeClass($uk.$$("th", table), "desc");
+							$uk.removeClass($uk.$$("td, th", table), clsActive);
+							$uk.toggleClass(th, "desc");
+							$uk.addClass(th, clsActive);
 
-							switching = false;
-							rows = table.rows;
+							// Add the active class to the column
+							tr.forEach(function(row) {
+								$uk.addClass($uk.$$("td", row)[cellIndex], clsActive);
+							});
 
-							for(i = 1; i < (rows.length - 1); i++) {
-								shouldSwitch = false;
-								x = $uk.$$("td", rows[i])[cellIndex].innerHTML;
-								y = $uk.$$("td", rows[i + 1])[cellIndex].innerHTML;
-								if(cellIndex) {
-									x = parseFloat(x.replace(/,/g, ""));
-									y = parseFloat(y.replace(/,/g, ""));
-								} else {
-									x = x.toLowerCase();
-									y = y.toLowerCase();
+							var rows, x, y, shouldSwitch;
+							var switching = true;
+							while(switching) {
+								switching = false;
+								rows = table.rows;
+								console.log(rows.length);
+
+								for(i = 1; i < (rows.length - 1); i++) {
+									shouldSwitch = false;
+									x = parseFloat(rows[i].getElementsByTagName("TD")[cellIndex].innerHTML.replace(/,/g, ""));
+									y = parseFloat(rows[i + 1].getElementsByTagName("TD")[cellIndex].innerHTML.replace(/,/g, ""));
+									if(desc ? x > y : x < y) {
+										shouldSwitch = true;
+										break;
+									}
 								}
-								if(desc ? x > y : x < y) {
-									shouldSwitch = true;
-									break;
+								if(shouldSwitch) {
+									rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+									switching = true;
+
 								}
 							}
-							if(shouldSwitch) {
-								rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-								switching = true;
-							}
-						}
+
+							// Hide loading icon
+							$uk.removeClass(th, "loading");
+						}, 256);
 					});
 
 					// Sort by deaths (desc) by default
-					$uk.trigger($uk.$$("thead tr th span", table)[2], "click");
-					this$1._init = true;
+					$uk.trigger($uk.$$("thead tr th .label", table)[2], "click");
 
 					// Make <thead> sticky
 					// @todo Cannot get this to work
@@ -431,12 +448,9 @@ var app = {
 	 *
 	 */
 	th: function(label, source, title) {
-		return "<span" + (title ? " data-uk-tooltip='" + JSON.stringify({
-			title: title,
-			mode: "hover"
-		}) + "'"  : "") + ">" +
+		return "<span class='label'" + (title ? " title='" + title + "'"  : "") + ">" +
 			label + (source ? "<sup class='source'>" + source + "</sup>" : "") +
-		"</span>";
+		"</span>" + "<span data-uk-spinner></span>";
 	}
 };
 
