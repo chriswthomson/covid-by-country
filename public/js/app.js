@@ -363,9 +363,9 @@ var app = {
 							var rows, x, y, shouldSwitch;
 							var switching = true;
 							while(switching) {
+
 								switching = false;
 								rows = table.rows;
-								console.log(rows.length);
 
 								for(i = 1; i < (rows.length - 1); i++) {
 									shouldSwitch = false;
@@ -376,6 +376,7 @@ var app = {
 										break;
 									}
 								}
+
 								if(shouldSwitch) {
 									rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
 									switching = true;
