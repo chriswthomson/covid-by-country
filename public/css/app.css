@@ -91,6 +91,7 @@ ul, ol {
 .uk-table th.uk-active:after {
 	background-color: #e5e5e5;
 	bottom: calc(-33% - 1px);
+	-webkit-clip-path: polygon(50% 100%, 0 0, 100% 0);
 	clip-path: polygon(50% 100%, 0 0, 100% 0);
 	content: "";
 	height: 33%;
@@ -102,6 +103,7 @@ ul, ol {
 
 .uk-table th.uk-active.desc:after {
 	bottom: 0;
+	-webkit-clip-path: polygon(50% 0, 0 100%, 100% 100%);
 	clip-path: polygon(50% 0, 0 100%, 100% 100%);
 }
 
