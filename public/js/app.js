@@ -343,50 +343,33 @@ var app = {
 						var cellIndex = th.cellIndex;
 						var clsActive = "uk-active";
 						var desc = $uk.hasClass(th, "desc");
+						var tbody = $uk.$("tbody", table);
 
 						// Show loading icon
 						$uk.addClass(th, "loading");
 
-						setTimeout(function() {
+						// Toggle classes
+						if(!desc) $uk.removeClass($uk.$$("th", table), "desc");
+						$uk.removeClass($uk.$$("td, th", table), clsActive);
+						$uk.toggleClass(th, "desc");
+						$uk.addClass(th, clsActive);
 
-							// Toggle classes
-							if(!desc) $uk.removeClass($uk.$$("th", table), "desc");
-							$uk.removeClass($uk.$$("td, th", table), clsActive);
-							$uk.toggleClass(th, "desc");
-							$uk.addClass(th, clsActive);
+						// Add the active class to the column
+						tr.forEach(function(row) {
+							$uk.addClass($uk.$$("td", row)[cellIndex], clsActive);
+						});
 
-							// Add the active class to the column
-							tr.forEach(function(row) {
-								$uk.addClass($uk.$$("td", row)[cellIndex], clsActive);
-							});
+						var rows = $uk.$$("tr", tbody), x, y;
+						rows.sort(function(a, b) {
+							x = parseFloat($uk.$$("td", a)[cellIndex].innerHTML.replace(/,/g, ""));
+							y = parseFloat($uk.$$("td", b)[cellIndex].innerHTML.replace(/,/g, ""));
+							return desc ? x > y : x < y;
+						});
 
-							var rows, x, y, shouldSwitch;
-							var switching = true;
-							while(switching) {
+						$uk.html(tbody, rows);
 
-								switching = false;
-								rows = table.rows;
-
-								for(i = 1; i < (rows.length - 1); i++) {
-									shouldSwitch = false;
-									x = parseFloat(rows[i].getElementsByTagName("TD")[cellIndex].innerHTML.replace(/,/g, ""));
-									y = parseFloat(rows[i + 1].getElementsByTagName("TD")[cellIndex].innerHTML.replace(/,/g, ""));
-									if(desc ? x > y : x < y) {
-										shouldSwitch = true;
-										break;
-									}
-								}
-
-								if(shouldSwitch) {
-									rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-									switching = true;
-
-								}
-							}
-
-							// Hide loading icon
-							$uk.removeClass(th, "loading");
-						}, 256);
+						// Hide loading icon
+						$uk.removeClass(th, "loading");
 					});
 
 					// Sort by deaths (desc) by default
