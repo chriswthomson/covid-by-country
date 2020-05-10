@@ -1,7 +1,7 @@
 /**
  * COVID-19 Statistics by Country
  *
- * @version 1.0.1
+ * @version 1.0.2
  * @author Chris Thomson
  *
  * @todo Improve error messages

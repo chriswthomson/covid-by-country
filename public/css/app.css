@@ -161,6 +161,12 @@ ul, ol {
 	.uk-table tr > :nth-child(2) {
 		padding-left: calc(30vw + 12px);
 	}
+
+	.uk-table tr > :nth-child(2).uk-active:after {
+		left: calc(30vw + 6px + ((100% - 30vw - 6px) / 2));
+		transform: translateX(-50%);
+		width: calc((100% - 30vw - 6px) / 3);
+	}
 }
 
 @media (max-width: 479px) {
@@ -180,5 +186,9 @@ ul, ol {
 
 	.uk-table tr > :nth-child(2) {
 		padding-left: calc(30vw + 6px);
+	}
+
+	.uk-table th .uk-spinner {
+		width: 20px;
 	}
 }
