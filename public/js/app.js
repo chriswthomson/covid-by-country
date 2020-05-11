@@ -291,8 +291,8 @@ var app = {
 								"<h5>Notes</h5>" +
 								"<ul>" + this$1.join([
 									"Click on a header to sort by that statistic. Click again to change the sort direction.",
-									"The data is provided by Johns Hopkins University, who use it for their " +
-										this$1.link("https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "COVID-19 Dashboard") + ".",
+									"The COVID-19 data is provided by Johns Hopkins University, who use it for their " +
+										this$1.link("https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6", "Dashboard") + ".",
 									"Only countries with populations > " + this$1.formatNumber(this$1.minPopulation) + " and recorded deaths are displayed.",
 									"The population statistics from restcountries.eu seem out-of-date to me. I wasn't able to verify where they are getting the data from, but I assume it is from the last available census for each country.",
 									"I'm a web developer, not a statistician. If you have any feedback, " +
@@ -310,6 +310,7 @@ var app = {
 								], "li") + "</ul>" +
 							"</div>" +
 							"<div class='uk-text-meta'>Last Updated: " + lastUpdated + " (UTC)</div>" +
+							"<p><em>If it is not obvious after a short review of the data, the point here is that countries cannot be compared.</em></p>",
 						"</div>"
 					);
 
