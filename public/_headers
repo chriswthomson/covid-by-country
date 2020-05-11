@@ -4,7 +4,7 @@
 
 	Referrer-Policy: no-referrer-when-downgrade
 
-	Content-Security-Policy: default-src 'none'; script-src 'self' cdnjs.cloudflare.com *.google.com *.gstatic.com *.googleapis.com www.google-analytics.com www.googletagmanager.com; style-src 'self' 'unsafe-inline' cdnjs.cloudflare.com *.googleapis.com; img-src 'self' data: *.google.com *.googleapis.com *.gstatic.com *.ggpht.com www.google-analytics.com www.googletagmanager.com; connect-src 'self' restcountries.eu raw.githubusercontent.com www.google-analytics.com; font-src 'self'; object-src 'self'; media-src 'self' data:; manifest-src 'self'; form-action 'self'; base-uri 'self'
+	Content-Security-Policy: default-src 'none'; script-src 'self' *.google.com *.gstatic.com *.googleapis.com www.google-analytics.com www.googletagmanager.com; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: *.google.com *.googleapis.com *.gstatic.com *.ggpht.com www.google-analytics.com www.googletagmanager.com; connect-src 'self' restcountries.eu raw.githubusercontent.com www.google-analytics.com; font-src 'self'; object-src 'self'; media-src 'self' data:; manifest-src 'self'; form-action 'self'; base-uri 'self'
 
 	X-Content-Type-Options: nosniff
 
