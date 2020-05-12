@@ -129,9 +129,16 @@ ul, ol {
 	border-right: 1px solid #e5e5e5;
 }
 
-.uk-table tr :nth-child(4),
-.uk-table tr :nth-child(7),
-.uk-table tr :nth-child(10) {
+.uk-table tr > :nth-child(2) {
+	display: none;
+}
+
+.uk-table thead tr:first-child > :first-child {
+	background: none;
+	border: 0;
+}
+
+.uk-table tr .border {
 	border-left: 1px solid #e5e5e5;
 }
 
@@ -153,7 +160,7 @@ ul, ol {
 
 	.uk-table tr > :first-child {
 		box-sizing: border-box;
-		height: 36px;
+		height: 38px;
 		overflow: hidden;
 		position: absolute;
 		text-overflow: ellipsis;
@@ -162,17 +169,17 @@ ul, ol {
 		z-index: 2
 	}
 
-	.uk-table tr > :nth-child(2) {
+	.uk-table tr > :nth-child(3) {
 		padding-left: calc(30vw + 12px);
 	}
 
-	.uk-table tr > :nth-child(2).uk-active:after {
+	.uk-table tr > :nth-child(3).uk-active:after {
 		left: calc(30vw + 6px + ((100% - 30vw - 12px) / 2));
 		transform: translateX(-50%);
 		width: calc((100% - 30vw - 6px) / 3);
 	}
 
-	.uk-table tr > :nth-child(2) .uk-spinner {
+	.uk-table tr > :nth-child(3) .uk-spinner {
 		left: calc(30vw + 6px + ((100% - 30vw - 12px) / 2));
 	}
 }
@@ -196,7 +203,7 @@ ul, ol {
 		width: 20px;
 	}
 
-	.uk-table tr > :nth-child(2) {
+	.uk-table tr > :nth-child(3) {
 		padding-left: calc(30vw + 6px);
 	}
 }
